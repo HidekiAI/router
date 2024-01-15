@@ -1,0 +1,77 @@
+[gd_scene load_steps=10 format=3 uid="uid://bs75hy0er4lsu"]
+
+[ext_resource type="Texture2D" uid="uid://buclh4bf8ifoy" path="res://assets/belts.png" id="1_yfks1"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d1keh"]
+atlas = ExtResource("1_yfks1")
+region = Rect2(0, 64, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xod4u"]
+atlas = ExtResource("1_yfks1")
+region = Rect2(64, 64, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n5n16"]
+atlas = ExtResource("1_yfks1")
+region = Rect2(128, 64, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4tdpo"]
+atlas = ExtResource("1_yfks1")
+region = Rect2(192, 64, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ja2md"]
+atlas = ExtResource("1_yfks1")
+region = Rect2(0, 64, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bf438"]
+atlas = ExtResource("1_yfks1")
+region = Rect2(192, 64, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_prqha"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d1keh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xod4u")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_n5n16")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4tdpo")
+}],
+"loop": true,
+"name": &"animate",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ja2md")
+}],
+"loop": true,
+"name": &"empty",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bf438")
+}],
+"loop": true,
+"name": &"filled",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_knm5q"]
+size = Vector2(65, 61)
+
+[node name="Node2DBelts" type="Node2D"]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_prqha")
+animation = &"animate"
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+shape = SubResource("RectangleShape2D_knm5q")

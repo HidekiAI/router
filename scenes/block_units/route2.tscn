@@ -1,0 +1,77 @@
+[gd_scene load_steps=10 format=3 uid="uid://8yjq8kggtrdl"]
+
+[ext_resource type="Texture2D" uid="uid://buclh4bf8ifoy" path="res://assets/belts.png" id="1_4jkoi"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q4k01"]
+atlas = ExtResource("1_4jkoi")
+region = Rect2(0, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5ecxg"]
+atlas = ExtResource("1_4jkoi")
+region = Rect2(64, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8v2di"]
+atlas = ExtResource("1_4jkoi")
+region = Rect2(128, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d0xif"]
+atlas = ExtResource("1_4jkoi")
+region = Rect2(192, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_orw4x"]
+atlas = ExtResource("1_4jkoi")
+region = Rect2(0, 128, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3fgd1"]
+atlas = ExtResource("1_4jkoi")
+region = Rect2(192, 128, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_prqha"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_q4k01")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5ecxg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8v2di")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d0xif")
+}],
+"loop": true,
+"name": &"animate",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_orw4x")
+}],
+"loop": true,
+"name": &"empty",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3fgd1")
+}],
+"loop": true,
+"name": &"filled",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_knm5q"]
+size = Vector2(65, 61)
+
+[node name="Node2DBelts" type="Node2D"]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_prqha")
+animation = &"animate"
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+shape = SubResource("RectangleShape2D_knm5q")
