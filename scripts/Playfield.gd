@@ -1,89 +1,60 @@
 extends TileMap
 
-enum {wait, move}
-var state
-
-@export var empty_spaces: PackedVector2Array
-
-@onready var possible_block_units_kvp = {
-	"line_block1": { "scene": preload("res://scenes/block_units/line_block1.tscn"), "atlas": Vector2i(0,0) },
-	"line_block2": { "scene": preload("res://scenes/block_units/line_block2.tscn"), "atlas": Vector2i(1,0) },
-	"line_block3": { "scene": preload("res://scenes/block_units/line_block3.tscn"), "atlas": Vector2i(2,0) },
-	"line_block4": { "scene": preload("res://scenes/block_units/line_block4.tscn"), "atlas": Vector2i(3,0) },
-	"route1_straight": { "scene": preload("res://scenes/block_units/route1_straight.tscn"), "atlas": Vector2i(0,1) },
-	"route1_90deg": { "scene": preload("res://scenes/block_units/route1_90deg.tscn"), "atlas": Vector2i(3,0) },
-	"route2": { "scene": preload("res://scenes/block_units/route2.tscn"), "atlas": Vector2i(3,0) },
-	"route3": { "scene": preload("res://scenes/block_units/route3.tscn"), "atlas": Vector2i(3,0) },
-	"route_join2T": { "scene": preload("res://scenes/block_units/route_join2T.tscn"), "atlas": Vector2i(0,2) },
-	"route_join3": { "scene": preload("res://scenes/block_units/route_join3.tscn"), "atlas": Vector2i(0,3) },
-	"void": { "scene": preload("res://scenes/block_units/void.tscn"), "atlas": Vector2i(0, 4) },
-	"junction": { "scene": preload("res://scenes/block_units/junction.tscn"), "atlas": Vector2i(3,0) },
-}
+#enum {wait, move}
+#var state
+#@export var empty_spaces: PackedVector2Array
 
 var destroy_timer = Timer.new()
 var collapse_timer = Timer.new()
 var refill_timer = Timer.new()
 
-var grid = []
-var void_cell_atlas = Vector2i(0, 4)
-var next_cells_queue = []
-var queue_size = 4
-
-#var block_unit_one = null
-#var block_unit_two = null
-#var last_place = Vector2(0,0)
-#var last_direction = Vector2(0,0)
-#var move_checked = false
-
-#var first_touch = Vector2(0,0)
-#var final_touch = Vector2(0,0)
-#var controlling = false
+var grid_by_key = []
 
 func _ready():
-	state = move
+	var tileset_scene = AutoloadGlobals.AutoloadPlayfieldCellTileset
+	#state = move
 	setup_timers()
-	randomize()
-	grid = make_2d_array()
-	void_cell_atlas = possible_block_units_kvp["void"]["atlas"]
+	#randomize()
+	grid_by_key = make_2d_array()
 
-	# fill the queue with random cells up to queue_size
-	for i in range(queue_size):
-		next_cells_queue.append(make_random_cell())
+	#var layered_maps: Array[Array] = AutoloadGlobals.evaluate_tilemap(self, "Playfield.gd._ready()")
+	AutoloadGlobals.call_deferred("evaluate_tilemap", self, "Playfield.gd._ready()")
 
-func make_random_cell():
-	var rand = floor(randf_range(0, possible_block_units_kvp.size()))
-	var block_unit = possible_block_units_kvp.values()[rand]
-	return block_unit
+#func make_random_cell():
+#	var tileset_scene = AutoloadGlobals.AutoloadPlayfieldCellTileset
+#	var rand = floor(randf_range(0, AutoloadGlobals.possible_block_units_kvp.size()))
+#	var block_unit = AutoloadGlobals.possible_block_units_kvp.values()[rand]
+#	return block_unit
 
-func get_clicked_tile_coordinate(mouse_position):
+# NOTE: We're usint TileSetScenesCollectionSource, hence Atlas is always (0, 0)
+func get_clicked_tile(mouse_position, layer) -> AutoloadGlobals.CBlockUnit:
 	#print ("event mousePos=", mouse_position)
 	#print ("get_local_mouse_position()=", get_local_mouse_position())
 	
 	# cell position is (col,row) position of the grid
-	var cell_position_vec2 = local_to_map(get_local_mouse_position())
+	var clickedBlock =  AutoloadGlobals.CBlockUnit.new()
+	clickedBlock.GridMapCoordinate = self.local_to_map(self.get_local_mouse_position())
 	
-	# atlas position is how your sprite atlas are defined in TileMap (visual editor)
-	var atlas_vec2 = get_cell_atlas_coords(0, cell_position_vec2)
+	# lookup source_id on the coordinate
+	if clickedBlock.GridMapCoordinate.x < 0 or clickedBlock.GridMapCoordinate.y < 0:
+		# user clicked outside the grid
+		clickedBlock.Key = AutoloadGlobals.BLOCK_KEYS.VOID
+		clickedBlock.Layer = -1
+		return clickedBlock
+
+	var source_id = self.get_cell_source_id(layer, clickedBlock.GridMapCoordinate, false)
+	clickedBlock.Key = AutoloadGlobals.get_key_from_source_id(source_id)
+	clickedBlock.Layer = layer
 	
-	#print("cell_position_vec2=", cell_position_vec2)
-	#print("cell_atlas_coord=", atlas_vec2)
-	# since GDScript does not have anonymous tuples, we'll just combine the 2 vecs2's as vec4
-	return Vector4i(cell_position_vec2.x, cell_position_vec2.y, atlas_vec2.x, atlas_vec2.y)
+	return clickedBlock
 
 func _on_input_event(viewport, event, shape_idx):
+	var k_layer = 0
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		# if the cell is empty, populate it
-		var clicked_cell_vec2x2 = get_clicked_tile_coordinate(event.position)
-		var clicked_cell_vec2 = Vector2i(clicked_cell_vec2x2.x, clicked_cell_vec2x2.y)
-		var clicked_sprite_atlas_vec2 = Vector2i(clicked_cell_vec2x2.z, clicked_cell_vec2x2.w)
-
-		# NOTE: if clicked cell atlas is (-1, -1), user clicked OUTSIDE the grid
-		if clicked_sprite_atlas_vec2.x == -1 and clicked_sprite_atlas_vec2.y == -1:
-			# opt out
-			print("1a")
-			pass
-
-		print("1b")
+		var tile_data = get_clicked_tile(event.position, k_layer)
+		var clicked_cell_vec2 = tile_data.GridMapCoordinate
+		print("Clicked tile at ", clicked_cell_vec2)
 		pass
 	else:
 		# else if cell is visible, replace it
@@ -91,29 +62,39 @@ func _on_input_event(viewport, event, shape_idx):
 		pass
 		
 func _unhandled_input(event):
+	var k_layer = 0
+	var next_cells_queue = []
 	if event is InputEventMouseButton and event.pressed :
 		# force this cell to become void?
-		var clicked_cell_vec2x2 = get_clicked_tile_coordinate(event.position)
-		var clicked_cell_vec2 = Vector2i(clicked_cell_vec2x2.x, clicked_cell_vec2x2.y)
-		var clicked_sprite_atlas_vec2 = Vector2i(clicked_cell_vec2x2.z, clicked_cell_vec2x2.w)
+		var tile_data = get_clicked_tile(event.position, k_layer)
 
 		# NOTE: if clicked cell atlas is (-1, -1), user clicked OUTSIDE the grid
-		if clicked_sprite_atlas_vec2.x == -1 and clicked_sprite_atlas_vec2.y == -1:
+		if tile_data.GridMapCoordinate.x < 0 or tile_data.GridMapCoordinate.y < 0:
 			# opt out
 			pass
 		else:
 			if event.button_index == MOUSE_BUTTON_LEFT:
 				# pop the queue and replace it
-				print("3a: ", clicked_cell_vec2, clicked_sprite_atlas_vec2)
-				var next_cell = next_cells_queue.pop_front()
-				next_cells_queue.append(make_random_cell())
-				grid[clicked_cell_vec2.x][clicked_cell_vec2.y] = next_cell["atlas"]
-				set_cell(0, clicked_cell_vec2, 0, next_cell["atlas"])
+				print("3a: Key=" + str(tile_data.Key) + ", Layer=" + str(tile_data.Layer) + ", GridMapCoordinate=" + str(tile_data.GridMapCoordinate))
+				#var next_cell = next_cells_queue.pop_front()
+				#next_cells_queue.append(make_random_cell())
+				#grid[clicked_cell_vec2.x][clicked_cell_vec2.y] = next_cell["atlas"]
+				#set_cell(0, clicked_cell_vec2, 0, next_cell["atlas"])
+				var next_cell = get_parent().get_node("TileMap_NextTiles").get_head()
+				#self.set_cell(tile_data.Layer, tile_data.GridMapCoordinate, AutoloadGlobals.possible_block_units_kvp[next_cell]["source_id"], Vector2i(0, 0), 0)
+				AutoloadGlobals.set_cell_by_key(self, tile_data.Layer, tile_data.GridMapCoordinate, next_cell)
+
 			elif event.button_index == MOUSE_BUTTON_RIGHT:
 				# erase it using void_cell_atlas
-				print("3b: ", clicked_cell_vec2, clicked_sprite_atlas_vec2)
-				grid[clicked_cell_vec2.x][clicked_cell_vec2.y] = void_cell_atlas
-				set_cell(0, clicked_cell_vec2, 0, void_cell_atlas)
+				print("3b: Key=" + str(tile_data.Key) + ", Layer=" + str(tile_data.Layer) + ", GridMapCoordinate=" + str(tile_data.GridMapCoordinate))
+				#grid[clicked_cell_vec2.x][clicked_cell_vec2.y] = void_cell_atlas
+				#set_cell(0, clicked_cell_vec2, 0, void_cell_atlas)
+				
+				# first, grab the head of the queue
+				#AutoloadGlobals.cell_clicked.emit()
+				var next_cell = get_parent().get_node("TileMap_NextTiles").get_head()
+				#self.set_cell(tile_data.Layer, tile_data.GridMapCoordinate, AutoloadGlobals.possible_block_units_kvp[next_cell]["source_id"], Vector2i(0, 0), 0)
+				AutoloadGlobals.set_cell(self, tile_data.Layer, tile_data.GridMapCoordinate, next_cell)
 
 func setup_timers():
 	destroy_timer.connect("timeout", Callable(self, "destroy_matches"))
@@ -131,9 +112,11 @@ func setup_timers():
 	refill_timer.set_wait_time(0.2)
 	add_child(refill_timer)
 
+# based on dimension (width, height) defined in TileMap via visual edtior Inspector, create a 2D array
+# of the same dimension and fill it with dictionary key-names as a lookup
 func make_2d_array():
 	var array = []
-	var cell_rect = get_used_rect()
+	var cell_rect = self.get_used_rect()
 	var height = cell_rect.size.y
 	var width = cell_rect.size.x
 	print("height=", height)
@@ -141,8 +124,8 @@ func make_2d_array():
 	for i in width:
 		array.append([])
 		for j in height:
-			array[i].append(null)
-			set_cell(0, Vector2i(i, j), 0, void_cell_atlas)
+			# TODO: lookup each cell in the TileMap and assign it's equivalent name instead
+			array[i].append(AutoloadGlobals.BLOCK_KEYS.VOID)	 # just make all into void
 	return array
 
 #func restricted_fill(place):
@@ -320,3 +303,4 @@ func make_2d_array():
 #	state = move
 #	move_checked = false
 #
+

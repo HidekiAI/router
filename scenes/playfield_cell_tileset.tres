@@ -1,0 +1,104 @@
+[gd_resource type="TileSet" load_steps=28 format=3 uid="uid://cmt0ifkrcvmdx"]
+
+[ext_resource type="Script" path="res://scripts/playfield_cell_tileset.gd" id="1_lnjbq"]
+[ext_resource type="Texture2D" uid="uid://buclh4bf8ifoy" path="res://assets/belts.png" id="2_6du7s"]
+[ext_resource type="PackedScene" uid="uid://bhkdmnmggh8nx" path="res://scenes/block_units/route3.tscn" id="3_xvu5x"]
+[ext_resource type="PackedScene" uid="uid://c3yntdjk7rbr4" path="res://scenes/block_units/route_join2T.tscn" id="4_8agkn"]
+[ext_resource type="PackedScene" uid="uid://d2rrib0m7mfv6" path="res://scenes/block_units/route_join3.tscn" id="5_arstl"]
+[ext_resource type="PackedScene" uid="uid://c20md10ujy508" path="res://scenes/block_units/void.tscn" id="6_e8ydh"]
+[ext_resource type="PackedScene" uid="uid://b7n3xwx0hwv75" path="res://scenes/block_units/junction.tscn" id="7_kpk8s"]
+[ext_resource type="PackedScene" uid="uid://328hjrknmm1g" path="res://scenes/block_units/line_block1.tscn" id="8_h33hv"]
+[ext_resource type="PackedScene" uid="uid://bubsjerkwbsg" path="res://scenes/block_units/line_block2.tscn" id="9_gj8i8"]
+[ext_resource type="PackedScene" uid="uid://qr6v5oste445" path="res://scenes/block_units/line_block3.tscn" id="10_j3nl5"]
+[ext_resource type="PackedScene" uid="uid://c7e3vi3tmwha1" path="res://scenes/block_units/line_block4.tscn" id="11_cuiqv"]
+[ext_resource type="PackedScene" uid="uid://bs75hy0er4lsu" path="res://scenes/block_units/route1_90deg.tscn" id="12_5k6eb"]
+[ext_resource type="PackedScene" uid="uid://bsg7upr5xw5lx" path="res://scenes/block_units/route1_straight.tscn" id="13_l4g7u"]
+[ext_resource type="PackedScene" uid="uid://8yjq8kggtrdl" path="res://scenes/block_units/route2.tscn" id="14_14drs"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_03hbe"]
+resource_name = "atlas_for_reference_do_not_use"
+texture = ExtResource("2_6du7s")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+0:1/0 = 0
+1:1/0 = 0
+2:1/0 = 0
+3:1/0 = 0
+0:2/0 = 0
+1:2/0 = 0
+2:2/0 = 0
+3:2/0 = 0
+0:3/0 = 0
+1:3/0 = 0
+2:3/0 = 0
+3:3/0 = 0
+0:4/0 = 0
+
+[sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_swdu1"]
+resource_name = "route3"
+scenes/1/scene = ExtResource("3_xvu5x")
+
+[sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_hpnjd"]
+resource_name = "route_join2T"
+scenes/1/scene = ExtResource("4_8agkn")
+
+[sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_aaxpx"]
+resource_name = "route_join3"
+scenes/1/scene = ExtResource("5_arstl")
+
+[sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_uuxfd"]
+resource_name = "void"
+scenes/1/scene = ExtResource("6_e8ydh")
+
+[sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_lwiri"]
+resource_name = "junction"
+scenes/1/scene = ExtResource("7_kpk8s")
+
+[sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_xdew8"]
+resource_name = "block1"
+scenes/1/scene = ExtResource("8_h33hv")
+
+[sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_y0r3t"]
+resource_name = "block2"
+scenes/1/scene = ExtResource("9_gj8i8")
+
+[sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_dx31t"]
+resource_name = "block3"
+scenes/1/scene = ExtResource("10_j3nl5")
+
+[sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_dbdtm"]
+resource_name = "block4"
+scenes/1/scene = ExtResource("11_cuiqv")
+
+[sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_0822c"]
+resource_name = "route1_90deg"
+scenes/1/scene = ExtResource("12_5k6eb")
+
+[sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_i1xgd"]
+resource_name = "route1_straight"
+scenes/1/scene = ExtResource("13_l4g7u")
+
+[sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_w5vww"]
+resource_name = "route2"
+scenes/1/scene = ExtResource("14_14drs")
+
+[resource]
+resource_name = "playfield_cell_tileset"
+tile_size = Vector2i(64, 64)
+sources/0 = SubResource("TileSetAtlasSource_03hbe")
+sources/2 = SubResource("TileSetScenesCollectionSource_lwiri")
+sources/3 = SubResource("TileSetScenesCollectionSource_xdew8")
+sources/4 = SubResource("TileSetScenesCollectionSource_y0r3t")
+sources/5 = SubResource("TileSetScenesCollectionSource_dx31t")
+sources/6 = SubResource("TileSetScenesCollectionSource_dbdtm")
+sources/7 = SubResource("TileSetScenesCollectionSource_0822c")
+sources/8 = SubResource("TileSetScenesCollectionSource_i1xgd")
+sources/9 = SubResource("TileSetScenesCollectionSource_w5vww")
+sources/10 = SubResource("TileSetScenesCollectionSource_swdu1")
+sources/11 = SubResource("TileSetScenesCollectionSource_hpnjd")
+sources/12 = SubResource("TileSetScenesCollectionSource_aaxpx")
+sources/13 = SubResource("TileSetScenesCollectionSource_uuxfd")
+script = ExtResource("1_lnjbq")

@@ -15,6 +15,10 @@ run/main_scene="res://scenes/main.tscn"
 config/features=PackedStringArray("4.2", "Mobile")
 config/icon="res://icon.svg"
 
+[autoload]
+
+AutoloadGlobals="*res://scripts/autoload_globals.gd"
+
 [debug]
 
 gdscript/warnings/unassigned_variable=2
@@ -27,8 +31,8 @@ gdscript/warnings/deprecated_keyword=2
 
 [display]
 
-window/size/viewport_width=1024
-window/size/viewport_height=768
+window/size/viewport_width=720
+window/size/viewport_height=1280
 window/size/initial_position_type=3
 window/stretch/mode="viewport"
 
@@ -39,8 +43,9 @@ version_control/autoload_on_startup=true
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/godot_vim/plugin.cfg", "res://addons/licenses/plugin.cfg", "res://addons/optional/plugin.cfg")
+enabled=PackedStringArray("res://addons/licenses/plugin.cfg", "res://addons/optional/plugin.cfg")
 
 [rendering]
 
+textures/canvas_textures/default_texture_filter=0
 renderer/rendering_method="mobile"

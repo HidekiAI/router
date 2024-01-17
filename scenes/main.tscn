@@ -4,27 +4,27 @@
 
 [node name="Main" type="Node2D"]
 
-[node name="Node2D" parent="." instance=ExtResource("1_5pmb7")]
+[node name="Node2DDefaultBG" parent="." instance=ExtResource("1_5pmb7")]
 
 [node name="ButtonPlay" type="Button" parent="."]
-offset_left = 688.0
-offset_top = 520.0
-offset_right = 824.0
-offset_bottom = 576.0
+offset_left = 384.0
+offset_top = 448.0
+offset_right = 520.0
+offset_bottom = 504.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 text = "Play"
 
 [node name="ButtonQuit" type="Button" parent="."]
-offset_left = 872.0
-offset_top = 528.0
-offset_right = 1040.0
-offset_bottom = 584.0
+offset_left = 360.0
+offset_top = 552.0
+offset_right = 528.0
+offset_bottom = 608.0
 text = "Quit"
 
 [node name="MenuButton" type="MenuButton" parent="."]
-offset_left = 456.0
-offset_top = 504.0
-offset_right = 648.0
-offset_bottom = 568.0
+offset_left = 360.0
+offset_top = 664.0
+offset_right = 552.0
+offset_bottom = 728.0
 text = "Settings"

@@ -1,5 +1,6 @@
-[gd_scene load_steps=5 format=3 uid="uid://bubsjerkwbsg"]
+[gd_scene load_steps=6 format=3 uid="uid://bubsjerkwbsg"]
 
+[ext_resource type="Script" path="res://scripts/block_units_line_block2.gd" id="1_4f2fp"]
 [ext_resource type="Texture2D" uid="uid://buclh4bf8ifoy" path="res://assets/belts.png" id="1_gy6td"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_l87qf"]
@@ -20,7 +21,8 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_knm5q"]
 size = Vector2(65, 61)
 
-[node name="Node2DBelts" type="Node2D"]
+[node name="block_units_line_block2" type="Node2D"]
+script = ExtResource("1_4f2fp")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_prqha")

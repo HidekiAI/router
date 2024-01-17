@@ -2,5 +2,7 @@
 .godot/
 forReference_ToBeDeleted/
 addons/
-
 forImporting/
+.vscode/
+
+*.tmp
