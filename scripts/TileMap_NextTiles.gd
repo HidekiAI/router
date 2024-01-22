@@ -1,5 +1,15 @@
 extends TileMap
 
+@onready var AllowedBlocks = [
+	AutoloadGlobalsTileset.BLOCK_KEYS.ROUTE1_STRAIGHT,
+	AutoloadGlobalsTileset.BLOCK_KEYS.ROUTE1_90DEG,
+	AutoloadGlobalsTileset.BLOCK_KEYS.ROUTE2,
+	AutoloadGlobalsTileset.BLOCK_KEYS.ROUTE3,
+	AutoloadGlobalsTileset.BLOCK_KEYS.ROUTE_JOIN2T,
+	AutoloadGlobalsTileset.BLOCK_KEYS.ROUTE_JOIN3,
+	AutoloadGlobalsTileset.BLOCK_KEYS.JUNCTION,
+]
+
 func _ready() -> void:
 	var tile_dimension = self.get_used_rect().size
 	assert(tile_dimension.x > 0, "TileMap_NextTiles.gd._ready() - tile dimension is 0, this is not allowed")
@@ -125,11 +135,8 @@ func pop_cell_head(k_layer: int) -> AutoloadGlobalsTileset.BLOCK_KEYS:
 
 # returns the key of a random block unit from the possible_block_units_kvp
 func get_random_key() -> AutoloadGlobalsTileset.BLOCK_KEYS:
-	var tileset_scene = AutoloadGlobalsTileset.AutoloadPlayfieldCellTileset
-
-	var first_valid_rand_key = 2	# skip BLOCK_KEYS.VOID(1) and BLOCK_KEYS.UNDEFINED(0)
-	var rand = floor(randf_range(first_valid_rand_key, AutoloadGlobalsTileset.possible_block_units_kvp.size()))
-	var key = AutoloadGlobalsTileset.possible_block_units_kvp.keys()[rand]
+	var rand = floor(randf_range(0, AllowedBlocks.size()))
+	var key = AllowedBlocks[rand]
 	return key
 
 # Push a random block unit to the TAIL of the queue (and pop is from the HEAD)
