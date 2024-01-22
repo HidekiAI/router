@@ -11,39 +11,39 @@ var refill_timer = Timer.new()
 var grid_by_key = []
 
 func _ready():
-	var tileset_scene = AutoloadGlobals.AutoloadPlayfieldCellTileset
+	var tileset_scene = AutoloadGlobalsTileset.AutoloadPlayfieldCellTileset
 	#state = move
 	setup_timers()
 	#randomize()
 	grid_by_key = make_2d_array()
 
-	#var layered_maps: Array[Array] = AutoloadGlobals.evaluate_tilemap(self, "Playfield.gd._ready()")
-	AutoloadGlobals.call_deferred("evaluate_tilemap", self, "Playfield.gd._ready()")
+	#var layered_maps: Array[Array] = AutoloadGlobalsTileset.evaluate_tilemap(self, "Playfield.gd._ready()")
+	AutoloadGlobalsTileset.call_deferred("evaluate_tilemap", self, "Playfield.gd._ready()")
 
 #func make_random_cell():
-#	var tileset_scene = AutoloadGlobals.AutoloadPlayfieldCellTileset
-#	var rand = floor(randf_range(0, AutoloadGlobals.possible_block_units_kvp.size()))
-#	var block_unit = AutoloadGlobals.possible_block_units_kvp.values()[rand]
+#	var tileset_scene = AutoloadGlobalsTileset.AutoloadPlayfieldCellTileset
+#	var rand = floor(randf_range(0, AutoloadGlobalsTileset.possible_block_units_kvp.size()))
+#	var block_unit = AutoloadGlobalsTileset.possible_block_units_kvp.values()[rand]
 #	return block_unit
 
 # NOTE: We're usint TileSetScenesCollectionSource, hence Atlas is always (0, 0)
-func get_clicked_tile(mouse_position, layer) -> AutoloadGlobals.CBlockUnit:
+func get_clicked_tile(mouse_position, layer) -> AutoloadGlobalsTileset.CBlockUnit:
 	#print ("event mousePos=", mouse_position)
 	#print ("get_local_mouse_position()=", get_local_mouse_position())
 	
 	# cell position is (col,row) position of the grid
-	var clickedBlock =  AutoloadGlobals.CBlockUnit.new()
+	var clickedBlock =  AutoloadGlobalsTileset.CBlockUnit.new()
 	clickedBlock.GridMapCoordinate = self.local_to_map(self.get_local_mouse_position())
 	
 	# lookup source_id on the coordinate
 	if clickedBlock.GridMapCoordinate.x < 0 or clickedBlock.GridMapCoordinate.y < 0:
 		# user clicked outside the grid
-		clickedBlock.Key = AutoloadGlobals.BLOCK_KEYS.VOID
+		clickedBlock.Key = AutoloadGlobalsTileset.BLOCK_KEYS.VOID
 		clickedBlock.Layer = -1
 		return clickedBlock
 
 	var source_id = self.get_cell_source_id(layer, clickedBlock.GridMapCoordinate, false)
-	clickedBlock.Key = AutoloadGlobals.get_key_from_source_id(source_id)
+	clickedBlock.Key = AutoloadGlobalsTileset.get_key_from_source_id(source_id)
 	clickedBlock.Layer = layer
 	
 	return clickedBlock
@@ -81,8 +81,8 @@ func _unhandled_input(event):
 				#grid[clicked_cell_vec2.x][clicked_cell_vec2.y] = next_cell["atlas"]
 				#set_cell(0, clicked_cell_vec2, 0, next_cell["atlas"])
 				var next_cell = get_parent().get_node("TileMap_NextTiles").get_head()
-				#self.set_cell(tile_data.Layer, tile_data.GridMapCoordinate, AutoloadGlobals.possible_block_units_kvp[next_cell]["source_id"], Vector2i(0, 0), 0)
-				AutoloadGlobals.set_cell_by_key(self, tile_data.Layer, tile_data.GridMapCoordinate, next_cell)
+				#self.set_cell(tile_data.Layer, tile_data.GridMapCoordinate, AutoloadGlobalsTileset.possible_block_units_kvp[next_cell]["source_id"], Vector2i(0, 0), 0)
+				AutoloadGlobalsTileset.set_cell_by_key(self, tile_data.Layer, tile_data.GridMapCoordinate, next_cell)
 
 			elif event.button_index == MOUSE_BUTTON_RIGHT:
 				# erase it using void_cell_atlas
@@ -91,10 +91,10 @@ func _unhandled_input(event):
 				#set_cell(0, clicked_cell_vec2, 0, void_cell_atlas)
 				
 				# first, grab the head of the queue
-				#AutoloadGlobals.cell_clicked.emit()
+				#AutoloadGlobalsTileset.cell_clicked.emit()
 				var next_cell = get_parent().get_node("TileMap_NextTiles").get_head()
-				#self.set_cell(tile_data.Layer, tile_data.GridMapCoordinate, AutoloadGlobals.possible_block_units_kvp[next_cell]["source_id"], Vector2i(0, 0), 0)
-				AutoloadGlobals.set_cell(self, tile_data.Layer, tile_data.GridMapCoordinate, next_cell)
+				#self.set_cell(tile_data.Layer, tile_data.GridMapCoordinate, AutoloadGlobalsTileset.possible_block_units_kvp[next_cell]["source_id"], Vector2i(0, 0), 0)
+				AutoloadGlobalsTileset.set_cell(self, tile_data.Layer, tile_data.GridMapCoordinate, next_cell)
 
 func setup_timers():
 	destroy_timer.connect("timeout", Callable(self, "destroy_matches"))
@@ -125,7 +125,7 @@ func make_2d_array():
 		array.append([])
 		for j in height:
 			# TODO: lookup each cell in the TileMap and assign it's equivalent name instead
-			array[i].append(AutoloadGlobals.BLOCK_KEYS.VOID)	 # just make all into void
+			array[i].append(AutoloadGlobalsTileset.BLOCK_KEYS.VOID)	 # just make all into void
 	return array
 
 #func restricted_fill(place):

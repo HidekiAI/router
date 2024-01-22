@@ -1,30 +1,56 @@
-[gd_scene load_steps=2 format=3 uid="uid://ccse807eo308b"]
+[gd_scene load_steps=4 format=3 uid="uid://ccse807eo308b"]
 
-[ext_resource type="PackedScene" uid="uid://pcbvxt4no7a0" path="res://scenes/bg_default.tscn" id="1_5pmb7"]
+[ext_resource type="Script" path="res://scripts/main_Control.gd" id="1_pei7f"]
+[ext_resource type="Script" path="res://Scripts/main_ButtonPlay.gd" id="1_wwmq8"]
+[ext_resource type="Script" path="res://scripts/main_ButtonQuit.gd" id="2_rw23p"]
 
 [node name="Main" type="Node2D"]
 
-[node name="Node2DDefaultBG" parent="." instance=ExtResource("1_5pmb7")]
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 232.0
+offset_top = 200.0
+offset_right = 744.0
+offset_bottom = 712.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_pei7f")
 
-[node name="ButtonPlay" type="Button" parent="."]
-offset_left = 384.0
-offset_top = 448.0
-offset_right = 520.0
-offset_bottom = 504.0
+[node name="ButtonPlay" type="Button" parent="Control"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -20.5
+offset_right = 20.5
+offset_bottom = 31.0
+grow_horizontal = 2
+scale = Vector2(4, 4)
 size_flags_horizontal = 3
 size_flags_vertical = 3
 text = "Play"
+script = ExtResource("1_wwmq8")
 
-[node name="ButtonQuit" type="Button" parent="."]
-offset_left = 360.0
-offset_top = 552.0
-offset_right = 528.0
-offset_bottom = 608.0
+[node name="ButtonQuit" type="Button" parent="Control"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -24.0
+offset_top = -184.0
+offset_right = 18.0
+offset_bottom = -153.0
+grow_horizontal = 2
+grow_vertical = 0
+scale = Vector2(4, 4)
 text = "Quit"
+script = ExtResource("2_rw23p")
 
-[node name="MenuButton" type="MenuButton" parent="."]
-offset_left = 360.0
-offset_top = 664.0
-offset_right = 552.0
-offset_bottom = 728.0
-text = "Settings"
+[connection signal="pressed" from="Control/ButtonQuit" to="Control/ButtonQuit" method="_on_pressed"]

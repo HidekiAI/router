@@ -1,4 +1,5 @@
 extends Node
+# Node name: AutoloadGlobalsTileset
 
 # NOTE: If you try to @export AND @onready on a same variable, @export will stomp/override
 # what was set in @onready.  i.e.:
@@ -8,14 +9,9 @@ extends Node
 # reference this as globals.AutoloadPlayfieldCellTileset rather than via get_node() as a backup method
 @onready var AutoloadPlayfieldCellTileset =  null
 
-# load from persisted storage (will @export) so that it can be set via editor
-@export var settings = {
-	"test_var_1": 0,
-	"test_var_2": 1,
-}
 
 # cell_clicked signal notifies subscribers to pop the head and push to tail, animate, etc
-signal cell_clicked(cell_value: AutoloadGlobals.BLOCK_KEYS, cell_position: Vector2i)
+signal cell_clicked(cell_value: AutoloadGlobalsTileset.BLOCK_KEYS, cell_position: Vector2i)
 
 # constants
 enum BLOCK_KEYS {
@@ -288,7 +284,7 @@ func reset_all_to_voids(tilemap: TileMap, layer: int, fill_hole_with_void: bool)
 				strdebug += " -> " + str(void_source_id) + " (VOID)"
 			print(strdebug)
 	
-# shared static function (hopefully thread-safe) - but make sure to use 'AutoloadGlobals.call_deferred("evaluate_tilemap", tilemap, "debug_label")' if you suspect race-conditions
+# shared static function (hopefully thread-safe) - but make sure to use 'AutoloadGlobalsTileset.call_deferred("evaluate_tilemap", tilemap, "debug_label")' if you suspect race-conditions
 func evaluate_tilemap(tilemap: TileMap, debug_label: String) -> Array[Array]:
 	print("\n[" + debug_label + "] - ==========================================================")
 	# evaluate this TileMap
