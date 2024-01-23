@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 AutoloadGlobalsSettings="*res://scripts/autoload_globals_settings.gd"
 AutoloadGlobalsTileset="*res://scripts/autoload_globals_tileset.gd"
+AutoloadGlobalsTileAnimation="*res://scripts/autoload_globals_tileanimation.gd"
 
 [debug]
 

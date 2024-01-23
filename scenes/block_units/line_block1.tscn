@@ -14,7 +14,17 @@ animations = [{
 "texture": SubResource("AtlasTexture_5kjc0")
 }],
 "loop": true,
-"name": &"default",
+"name": &"animate",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"empty",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"filled",
 "speed": 5.0
 }]
 
@@ -26,6 +36,7 @@ script = ExtResource("1_1qvwg")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_prqha")
+animation = &"filled"
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
 

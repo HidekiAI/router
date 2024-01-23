@@ -9,12 +9,22 @@ region = Rect2(192, 0, 64, 64)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_prqha"]
 animations = [{
+"frames": [],
+"loop": true,
+"name": &"animate",
+"speed": 5.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_fn4uu")
 }],
 "loop": true,
-"name": &"default",
+"name": &"empty",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"filled",
 "speed": 5.0
 }]
 
@@ -26,6 +36,7 @@ script = ExtResource("1_7ks8t")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_prqha")
+animation = &"filled"
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
 

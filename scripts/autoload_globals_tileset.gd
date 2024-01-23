@@ -167,7 +167,6 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	pass
 
-
 # According to github source code for Layer.fix_invalid_tiles(), it is supposed to be it tests for:
 # * if atlas coordinate is valid
 # * if source_id is valid (i.e. not -1)

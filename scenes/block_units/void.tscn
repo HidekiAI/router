@@ -14,17 +14,27 @@ animations = [{
 "name": &"add",
 "speed": 5.0
 }, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_w04fq")
-}],
+"frames": [],
 "loop": true,
-"name": &"default",
+"name": &"animate",
 "speed": 5.0
 }, {
 "frames": [],
 "loop": true,
 "name": &"delete",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_w04fq")
+}],
+"loop": true,
+"name": &"empty",
+"speed": 5.0
+}, {
+"frames": [],
+"loop": true,
+"name": &"filled",
 "speed": 5.0
 }]
 
@@ -36,9 +46,11 @@ script = ExtResource("1_tkxg2")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_prqha")
+animation = &"filled"
 
 [node name="AnimatedSprite2D2" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_prqha")
+animation = &"empty"
 
 [node name="StaticBody2D" type="StaticBody2D" parent="."]
 
