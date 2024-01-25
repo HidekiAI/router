@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://ccse807eo308b"]
+[gd_scene load_steps=5 format=3 uid="uid://ccse807eo308b"]
 
 [ext_resource type="Script" path="res://scripts/main_Control.gd" id="1_pei7f"]
 [ext_resource type="Script" path="res://Scripts/main_ButtonPlay.gd" id="1_wwmq8"]
 [ext_resource type="Script" path="res://scripts/main_ButtonQuit.gd" id="2_rw23p"]
+[ext_resource type="Script" path="res://Scripts/block_units_base.gd" id="4_u5vfg"]
 
 [node name="Main" type="Node2D"]
 
@@ -52,5 +53,8 @@ grow_vertical = 0
 scale = Vector2(4, 4)
 text = "Quit"
 script = ExtResource("2_rw23p")
+
+[node name="BlockUnitBase" type="Node2D" parent="Control"]
+script = ExtResource("4_u5vfg")
 
 [connection signal="pressed" from="Control/ButtonQuit" to="Control/ButtonQuit" method="_on_pressed"]
