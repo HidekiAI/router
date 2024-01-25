@@ -1,0 +1,9 @@
+
+[configuration]
+entry_symbol = "gdext_rust_init"
+compatibility_minimum = 4.1
+
+[libraries]
+windows.debug.x86_64 =   "res://../lib_rust/block_units/target/debug/block_units.dll"
+windows.release.x86_64 = "res://../lib_rust/block_units/target/release/block_units.dll"
+windows.x86_64 =         "res://../lib_rust/block_units/target/debug/block_units.dll"

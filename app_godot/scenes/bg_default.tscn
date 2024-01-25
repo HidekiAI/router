@@ -32,3 +32,9 @@ tile_set = ExtResource("18_ihriv")
 format = 2
 layer_0/tile_data = PackedInt32Array(0, 9, 65536, 65536, 9, 65536, 131072, 2, 65536)
 script = ExtResource("5_4ee46")
+
+[node name="ForBlockUnits" type="ForBlockUnits" parent="."]
+tile_set = ExtResource("18_ihriv")
+
+[node name="ForBlockUnits2" type="ForBlockUnits" parent="."]
+tile_set = ExtResource("18_ihriv")
