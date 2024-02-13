@@ -1,0 +1,13 @@
+[package]
+name = "autoload_primitives"
+version = "0.1.0"
+edition = "2021"
+
+# For Godot, we need to compile to a dynamic library (cdylib)
+# It's tempting to create "rlib" and/or "staticlib", but because we'll get an entry-point (init already defined) error, we'll leave it as dynamic.
+[lib]
+crate-type = ["cdylib"]  # Compile this crate to a dynamic C library.
+
+[dependencies]
+godot = { git = "https://github.com/godot-rust/gdext", branch = "master" }
+internal_primitives = {path = "../internal_primitives"}

@@ -7,8 +7,10 @@ func _ready() -> void:
 	# 2. $TileMap_NextTiles
 	# in which, I need TileMap_NextTiles to be initialized AFTER the Playfield, so that it can set itself
 	# up for randomized tiles
-	pass
-
+	AutoloadPrimitives.foo();
+	AutoloadPrimitives.get_foo();
+	AutoloadPrimitives.set_foo(42);
+	AutoloadPrimitives.get_foo();
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:

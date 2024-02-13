@@ -33,7 +33,7 @@ pub mod entry_point {
 
     // NOTE: This enum will need to be assigned to the TileSetScenesCollectionSource scenes (.tscn)
     // as a meta-data so that we can identify not by PackedScene, but by the enum value
-    #[derive(Debug, Clone, Copy, Hash, Eq, PartialEq)]  // need both Hash and Eq because it's used as dictionary key
+    #[derive(Debug, Clone, Copy, Hash, Eq, PartialEq)] // need both Hash and Eq because it's used as dictionary key
     pub enum BlockKeys {
         Undefined,
         Void,             // basically, empty space
@@ -157,6 +157,7 @@ pub mod entry_point {
 
         fn ready(&mut self) {
             godot_print!("tile_related::MyTileExtension::ready()");
+            self.get_singleton_test();
             // build the cell_type_lookup dictionary here IF TileSet is set...
             // if not, we'll need to follow the pattern in which on the time of
             // getting, it will check if dictionary is empty, and if so, build it
@@ -244,6 +245,28 @@ pub mod entry_point {
     }
 
     impl ForBlockUnits {
+        pub fn get_singleton_test(&self) -> Option<Variant> {
+            // we ASSUME that the singleton ForAutoloadPrimitives is a valid struct
+            // using gawd-awful-typo-error-prone string-based getter:
+            match godot::engine::Engine::singleton()
+                .get_singleton(StringName::from("ForAutoloadPrimitives"))
+            {
+                Some(mut singleton) => {
+                    // Sadly, because we cannot link to the singleton directly, we cannot cast<ForAutoLoadPrimitives>() or
+                    // try_cast<ForAutoLoadPrimitives>() to it, and just "trust" that the method "foo()" exists:
+                    // at least, if we can try_cast, we could have had another match() statement here
+                    // we ASSUME that method ForAutoloadPrimitives::foo() exists!
+                    let call_response = singleton.call("foo".into(), &[]);
+                    Some(call_response)
+                }
+                None => {
+                    //... do something, probably the best thing to do is complain that you'd need to make sure the autoload_primitives.gdextension exist
+                    godot_error!("tile_related::MyTileExtension::get_singleton_test() - ForAutoloadPrimitives singleton via autoload_primitives.gdextension is not loaded!");
+                    None
+                }
+            }
+        }
+
         fn build_cell_type_lookup(&mut self) -> BlockUnitCellDictionaryType {
             let mut cell_type_lookup: BlockUnitCellDictionaryType = HashMap::new();
             // traverse the tileset and extract only the tiles that are of the type TileSetScenesCollectionSource
@@ -251,65 +274,69 @@ pub mod entry_point {
                 let tileset = self.base().get_tileset().unwrap();
                 for source_index in 0..tileset.get_source_count() {
                     let source_id = tileset.get_source_id(source_index);
-                    let possible_source: Option<Gd<TileSetSource>> = match tileset.get_source(source_id) {
+                    let possible_source: Option<Gd<TileSetSource>> = match tileset
+                        .get_source(source_id)
+                    {
                         Some(tile_source) => {
-                            let is_scene_collection = tile_source.is_class("TileSetScenesCollectionSource".into());
+                            let is_scene_collection =
+                                tile_source.is_class("TileSetScenesCollectionSource".into());
 
-                            let tile_source_scenecollection: Option<Gd<TileSetScenesCollectionSource>> =
-                                match is_scene_collection {
-                                    true => {
-                                        let mut tile_source_as_scenecollection_mut =
-                                            tile_source.clone().cast::<TileSetScenesCollectionSource>();
-                                        let scenes_in_this_tile =
-                                            tile_source_as_scenecollection_mut.get_scene_tiles_count();
-                                        for scne_tiles_index in 0..scenes_in_this_tile {
-                                            let tile_id =
-                                                tile_source_as_scenecollection_mut.get_scene_tile_id(scne_tiles_index);
-                                            let possible_packed_scene: Option<Gd<PackedScene>> =
-                                                tile_source_as_scenecollection_mut.get_scene_tile_scene(tile_id);
-                                            let possible_resource_path: Option<GString> =
-                                                match possible_packed_scene {
-                                                    Some(packed_scene) => {
-                                                        // i.e. "res://scenes/block_units/voice.tscn"
-                                                        Some(packed_scene.get_path())
-                                                    }
-                                                    None => {
-                                                        godot_print!("tile_related::MyTileExtension::build_cell_type_lookup() - packed_scene is None");
-                                                        None
-                                                    }
-                                                };
+                            let tile_source_scenecollection: Option<
+                                Gd<TileSetScenesCollectionSource>,
+                            > = match is_scene_collection {
+                                true => {
+                                    let mut tile_source_as_scenecollection_mut =
+                                        tile_source.clone().cast::<TileSetScenesCollectionSource>();
+                                    let scenes_in_this_tile =
+                                        tile_source_as_scenecollection_mut.get_scene_tiles_count();
+                                    for scne_tiles_index in 0..scenes_in_this_tile {
+                                        let tile_id = tile_source_as_scenecollection_mut
+                                            .get_scene_tile_id(scne_tiles_index);
+                                        let possible_packed_scene: Option<Gd<PackedScene>> =
+                                            tile_source_as_scenecollection_mut
+                                                .get_scene_tile_scene(tile_id);
+                                        let possible_resource_path: Option<GString> =
+                                            match possible_packed_scene {
+                                                Some(packed_scene) => {
+                                                    // i.e. "res://scenes/block_units/voice.tscn"
+                                                    Some(packed_scene.get_path())
+                                                }
+                                                None => {
+                                                    godot_print!("tile_related::MyTileExtension::build_cell_type_lookup() - packed_scene is None");
+                                                    None
+                                                }
+                                            };
 
-                                            // We ASSUME that each scenes (.tscn) that are TileSet related, has an extra
-                                            // meta-data assigned, in which it has the BLockKeys enum value to it...
+                                        // We ASSUME that each scenes (.tscn) that are TileSet related, has an extra
+                                        // meta-data assigned, in which it has the BLockKeys enum value to it...
 
-                                            // check if this scene (possible_resource_path) already exists in the lookup dictionary
-                                            // if so, just update the source_id; else add it to the dictionary
-                                            //if let upserted_value =
-                                            //    cell_type_lookup.entry(tile_source.get_key())
-                                            //{
-                                            //    upserted_value.source_id = source_id;
-                                            //} else {
-                                            //    let block_unit_cell_kvp_value =
-                                            //        BlockUnitCellKVPValue {
-                                            //            source_id: source_id,
-                                            //            scene: possible_packed_scene,
-                                            //            resource_path: possible_resource_path,
-                                            //        };
-                                            //    cell_type_lookup.insert(
-                                            //        tile_source.get_key(),
-                                            //        block_unit_cell_kvp_value,
-                                            //    );
-                                            //}
-
-                                        }
-
-                                        Some(tile_source_as_scenecollection_mut)
+                                        // check if this scene (possible_resource_path) already exists in the lookup dictionary
+                                        // if so, just update the source_id; else add it to the dictionary
+                                        //if let upserted_value =
+                                        //    cell_type_lookup.entry(tile_source.get_key())
+                                        //{
+                                        //    upserted_value.source_id = source_id;
+                                        //} else {
+                                        //    let block_unit_cell_kvp_value =
+                                        //        BlockUnitCellKVPValue {
+                                        //            source_id: source_id,
+                                        //            scene: possible_packed_scene,
+                                        //            resource_path: possible_resource_path,
+                                        //        };
+                                        //    cell_type_lookup.insert(
+                                        //        tile_source.get_key(),
+                                        //        block_unit_cell_kvp_value,
+                                        //    );
+                                        //}
                                     }
-                                    false => {
-                                        godot_print!("tile_related::MyTileExtension::build_cell_type_lookup() - tile_source is not of class TileSetScenesCollectionSource");
-                                        None
-                                    }
-                                };
+
+                                    Some(tile_source_as_scenecollection_mut)
+                                }
+                                false => {
+                                    godot_print!("tile_related::MyTileExtension::build_cell_type_lookup() - tile_source is not of class TileSetScenesCollectionSource");
+                                    None
+                                }
+                            };
 
                             Some(tile_source)
                         }

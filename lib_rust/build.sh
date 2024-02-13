@@ -3,7 +3,9 @@
 # arg1: platform
 # arg2...: libs
 _ARG1_PLATFORM="windows"
-_ARG2_LIBS="block_units"
+# NOTE: Do not add shared and autoload crates here, instead, use Cargo.toml with "path" to point to the crate
+# basic rule-of-thumb: if it exports an entry point, it be added to the libs list here:
+_ARG2_LIBS="autoload_primitives block_units"
 _GODOT_PROJECT="../app_godot/"
 
 # NOTE: Even if using 4.2.1 (i.e. --dump-extension-api says it's 4.2.1), you only set major/minor and set the version to "4.2" instead of "4.2.1"
