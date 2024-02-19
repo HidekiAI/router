@@ -60,7 +60,7 @@ struct BlockUnitCell {
 #[derive(Debug, Clone, PartialEq)]
 struct BlockUnitCellKVPValue {
     source_id: CellIdType,
-    scene: Option<Gd<PackedScene>>, 
+    scene: Option<Gd<PackedScene>>,
     resource_path: Option<GString>, // use GString here?
 }
 
@@ -76,7 +76,11 @@ impl BlockUnitCellDictionaryType {
             dict: TBlockUnitCellDictionaryType::new(),
         }
     }
-    fn insert(&mut self, key: BlockKeys, value: BlockUnitCellKVPValue) -> Option<BlockUnitCellKVPValue> {
+    fn insert(
+        &mut self,
+        key: BlockKeys,
+        value: BlockUnitCellKVPValue,
+    ) -> Option<BlockUnitCellKVPValue> {
         self.dict.insert(key, value)
     }
     fn get(&self, key: &BlockKeys) -> Option<&BlockUnitCellKVPValue> {
@@ -153,16 +157,42 @@ impl TryFrom<i64> for BlockUnitsMapType {
 }
 
 // rather than erroing, will just return an empty collection if cannot convert
-// Hopefully, we can ASSUME that Godot Dictionary will always have UNIQUE keys 
+// Hopefully, we can ASSUME that Godot Dictionary will always have UNIQUE keys
 // (rust HashMap does upsert to prevent duplicates, hence we can assume at least
 // from Rust side, it will always be unique)
 impl From<Dictionary> for BlockUnitCellDictionaryType {
     fn from(dict: Dictionary) -> Self {
         let mut new_dict = BlockUnitCellDictionaryType::new();
-        for key in dict.keys_array() {
-            let key: BlockKeys = key.try_into().unwrap();
-            let value: BlockUnitCellKVPValue = dict.get(key).try_into().unwrap();
-            new_dict.insert(key, value);
+        for variant_key in dict.keys_array().iter_shared() {
+            let possible_value = dict.get(variant_key);
+            if possible_value.is_some() {
+                let variant_value = possible_value.unwrap();
+                // see if key meets BlockKeys enum
+//                let key_as_blockkeys: BlockKeys = BlockKeys::try_from(variant_key).unwrap();
+//                if key_as_blockkeys.is_err() {
+//                    continue;
+//                }
+//                else if key_as_blockkeys.unwrap() == BlockKeys::Undefined {
+//                    continue;
+//                }
+//                // cast to see if Value is of TileSetScenesCollectionSource type, if not, skip
+//                if ! variant_value.is_class::<TileSetScenesCollectionSource>() {
+//                    continue;
+//                }
+//                let tile_set_scenes_collection_source  = variant_value as TileSetScenesCollectionSource;
+//                let source_id = tile_set_scenes_collection_source.get_id() as CellIdType;
+//                let possible_scene = tile_set_scenes_collection_source.get_scene() as Option<Gd<PackedScene>>;
+//                let possible_resource_path = tile_set_scenes_collection_source.get_path() as Option<GString>;
+//
+//                let cell_unit = BlockUnitCellKVPValue {
+//                    source_id: source_id,
+//                    scene: possible_scene,
+//                    resource_path: possible_resource_path  ,
+//                };
+//
+//                // Hashmap upsert
+//                new_dict.insert(key_as_blockkeys, cell_unit);
+            }
         }
         new_dict
     }
@@ -170,9 +200,9 @@ impl From<Dictionary> for BlockUnitCellDictionaryType {
 impl From<BlockUnitCellDictionaryType> for Dictionary {
     fn from(dict: BlockUnitCellDictionaryType) -> Self {
         let mut new_dict = Dictionary::new();
-        for (key, value) in dict {
-            new_dict.insert(key.into(), value.into());
-        }
+//        for (key, value) in dict {
+//            new_dict.insert(key.into(), value.into());
+//        }
         new_dict
     }
 }

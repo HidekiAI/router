@@ -22,90 +22,6 @@ if [ x"$1" != x"" ]; then
 fi
 
 
-# let's first check the version of the API
- pushd . ; cd /tmp ; $GODOT4_BIN --headless --dump-extension-api ; head  extension_api.json ; popd
- echo "Will be setting VERSION: 'compatibility_minimum = ${_GODOT_VERSION}' in the .gdextension file..."
-
-# Aarg1: libname (i.e. "lib_rust_1")
-# Arg2: (Optional) Platform; if not passed, assumes Linux
-# Arg3: (Optional) target; if not passed, assumes Debug
-# Arg4: (Optional) Arch; if not passed, assumes x86_64
-function make_libname() {
-    if [ x"$1" == x"" ]; then
-        echo "#ERROR: Must pass libname as arg1"
-        exit -666
-    fi
-    _ARG1_LIBNAME=$1
-    shift
-    _LIBNAME="lib${_ARG1_LIBNAME}"
-
-    # defaults:
-    _PLATFORM="linux"
-    _ARCH="x86_64"
-    _PLATFORM_EXT="so"
-    _TARGET="debug"
-
-    if [ x"$1" != x"" ]; then
-        _PLATFORM=$1
-        shift
-        if [ x"$1" != x"" ]; then
-            _TARGET=$1
-            shift
-        fi
-    fi
-
-    if [ "${_PLATFORM}" == "windows" ]; then
-        _LIBNAME="${_ARG1_LIBNAME}"
-        _PLATFORM_EXT="dll"
-    elif [ "${_PLATFORM}" == "macos" ]; then
-        echo "# NOTE/WARNING: Don't really care to test macos x86_64 and arm...  so fix this yourself :P"
-        _PLATFORM_EXT="dylib"
-    fi
-
-    # NOTE: Though this format is unnecessary, especially since you can distinctly spot .so vs .dll to know that which file belongs to which OS
-    # but having it named explicit like this will help on flattened directory structure where filename is the namespace
-    #echo "target/${_TARGET}/${_LIB_NAME}.${_PLATFORM}.template_${_TARGET}.${_ARCH}.${_PLATFORM_EXT}"
-    echo "target/${_TARGET}/${_LIB_NAME}.${_PLATFORM_EXT}"
-}
-
-
-# Arg1: libname
-# Arg2: DEBUG target
-# Arg3: Release target
-# Arg4: Platform
-function make_gdext() {
-    if [ x"$1" == x"" ]; then
-        echo "#ERROR: Must pass libname as arg1"
-        exit -666
-    fi
-
-    _LIB_DIR=$(basename $(pwd))
-
-    echo ""
-    echo "[configuration]"
-    echo "entry_symbol = \"gdext_rust_init\""
-    echo "compatibility_minimum = ${_GODOT_VERSION}"
-    echo ""
-    echo "[libraries]"
-
-    if [ "$4" == "linux" ]; then
-        echo "linux.debug.x86_64 =     \"res://../${_LIB_DIR}/$1/$2\""
-        echo "linux.release.x86_64 =   \"res://../${_LIB_DIR}/$1/$3\""
-        echo "linux.x86_64 =           \"res://../${_LIB_DIR}/$1/$2\""
-    elif [ "$4" == "windows" ]; then
-        echo "windows.debug.x86_64 =   \"res://../${_LIB_DIR}/$1/$2\""
-        echo "windows.release.x86_64 = \"res://../${_LIB_DIR}/$1/$3\""
-        echo "windows.x86_64 =         \"res://../${_LIB_DIR}/$1/$2\""
-    elif [ "$4" == "macos" ]; then
-        echo "macos.debug =            \"res://../${_LIB_DIR}/$1/$2\""
-        echo "macos.release =          \"res://../${_LIB_DIR}/$1/$3\""
-        echo "macos =                  \"res://../${_LIB_DIR}/$1/$2\""
-    elif [ "$4" == "macos.arm64" ]; then
-        echo "macos.debug.arm64 =      \"res://../${_LIB_DIR}/$1/$2\""
-        echo "macos.release.arm64 =    \"res://../${_LIB_DIR}/$1/$3\""
-        echo "macos.arm64 =            \"res://../${_LIB_DIR}/$1/$2\""
-    fi
-}
 
 for _LIB_NAME in ${_ARG2_LIBS}; do
   echo -e "\nBuilding ${_LIB_NAME}"
@@ -124,7 +40,6 @@ for _LIB_NAME in ${_ARG2_LIBS}; do
   ls -lAh ${_T}
   _TDEBUG=${_T}
 
-  cargo build --release
   _SRC="target/release/lib${_LIB_NAME}.so"
   _T=$(make_libname ${_LIB_NAME} "linux" "release") 
   _SRC="target/release/lib${_LIB_NAME}"

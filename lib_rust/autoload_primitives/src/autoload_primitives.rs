@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use godot::prelude::*;
-use godot::{engine::Engine, prelude::*};
+//use godot::{engine::Engine, prelude::*};
 // NOTE: Shared libs CANNOT export entry-points, for you WILL get a linker error
 // of 'error LNK2005: gdext_rust_init already defined in...' error.
 // In another words, for Autoload-based extensions, you'll need to do
@@ -37,28 +37,31 @@ use godot::{engine::Engine, prelude::*};
 //      AutoloadPrimitives.set_foo(42);
 //      AutoLoadPrimitives.get_foo();
 #[derive(GodotClass)]
-//#[class(tool, init, base=Object)] // uncomment this (with default init) and remove below (impl init)
-#[class(tool, base=Object)]
+#[class(tool, init, base=Object)] // uncomment this (with default init) and remove below (impl init)
 pub struct AutoloadPrimitives {
     //base: Mutex<Base<Object>>,
     base: Base<Object>,
 
+    block_unit_cell_hashmap: BlockUnitCellDictionaryType,    // do NOT attempt to #[export] HashMap<> because it's not possible
     #[export]
-    block_unit_cell_dictionary: BlockUnitCellDictionaryType,
+    block_unit_cell_dictionary: Dictionary,   // this on the other hand, can be exported
+
+    #[export]
+    foo_value: i64,
 }
 
-// Implementing init() to verify whether the entry point is called, remove/comment this when working
-#[godot_api]
-impl IObject for AutoloadPrimitives {
-    // For singleton, is this init() really safe?  Does it need MUTEX?
-    fn init(base: Base<Object>) -> Self {
-        godot_print!("AutoloadPrimitives::init() - breadcrumb");
-        AutoloadPrimitives {
-            base,
-            block_unit_cell_dictionary: BlockUnitCellDictionaryType::new(),
-        }
-    }
-}
+//// Implementing init() to verify whether the entry point is called, remove/comment this when working
+//#[godot_api]
+//impl IObject for AutoloadPrimitives {
+//    // For singleton, is this init() really safe?  Does it need MUTEX?
+//    fn init(base: Base<Object>) -> Self {
+//        godot_print!("AutoloadPrimitives::init() - breadcrumb");
+//        AutoloadPrimitives {
+//            base,
+//            block_unit_cell_dictionary: BlockUnitCellDictionaryType::new(),
+//        }
+//    }
+//}
 
 #[godot_api]
 impl AutoloadPrimitives {
@@ -88,11 +91,11 @@ impl AutoloadPrimitives {
 
     // Note: if in future, need to expose this as GDScript, return Godot-defined Dictionary as well
     // but for now, we'll just use Rust's HashMap because Godto Variants gives me heebeejeebees
-    #[func]
-    fn get_tileset_dictionary(&self) -> BlockUnitCellDictionaryType {
-        let mut dict = BlockUnitCellDictionaryType::new();
-        dict
-    }
+//    #[func]
+//    fn get_tileset_dictionary(&self) -> BlockUnitCellDictionaryType {
+//        let mut dict = BlockUnitCellDictionaryType::new();
+//        dict
+//    }
 }
 
 // TileMap::get_tileset() returns Option<Gd<crate::engine::TileSet>>, meaning you can
